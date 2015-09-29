@@ -1,0 +1,17 @@
+{
+  "name": "dynamic-popup",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dynamic-popup.min.js",
+  "scripts": {
+    "build": "npm run babel && npm run uglify",
+    "babel": "babel --no-comments --compact=true src.js -o dynamic-popup.min.js",
+    "uglify": "uglify -s dynamic-popup.min.js -o dynamic-popup.min.js"
+  },
+  "keywords": [
+    "popup",
+    "tooltip"
+  ],
+  "author": "",
+  "license": "ISC"
+}

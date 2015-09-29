@@ -1,6 +1,6 @@
 {
   "name": "dynamic-popup",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "DynamicPopup relocate itself depending on the viewport's bounds.",
   "repository": {
     "type" : "git",

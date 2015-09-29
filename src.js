@@ -272,7 +272,7 @@
         if (direction === 'top' ||
             direction === 'bottom') {
           posX += (window.innerWidth - (posX + popupWidth))
-          chevronPos.left = `${((targetLeft + targetWidth) / 2) - chevronWidth}px`
+          chevronPos.left = `${(targetLeft - posX) + (targetWidth / 2) - (chevronWidth / 2)}px`
         }
         if (direction === 'right') {
           if (left.left > 0) {

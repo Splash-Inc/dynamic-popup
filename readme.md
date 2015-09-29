@@ -33,3 +33,34 @@ new DynamicPopup({
 })
 
 ```
+
+## Customize
+
+You can override default popup style.
+
+```css
+.dynamic-popup {/*...*/}
+.dynamic-popup__content {/*...*/}
+.dynamic-popup__chevron {/*...*/}
+```
+
+You can override a specific popup
+
+```css
+.my-example-popup {/*...*/}
+.my-example-popup__content {/*...*/}
+.my-example-popup__chevron {/*...*/}
+}
+```
+
+## Notes
+
+You can destroy DynamicPopup:
+
+```js
+var myPopup = new DynamicPopup(/*...*/)
+
+myPopup.destroy()
+```
+
+This will unbind all events and remove popup from DOM.

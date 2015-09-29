@@ -321,13 +321,13 @@
 
     render() {
       this.popup = document.createElement('div')
-      this.popup.classList.add(
-        this.baseClass, this.popupCustom)
+      this.popup.classList.add(this.baseClass)
+      this.popupCustom && this.popup.classList.add(this.popupCustom)
       this.popup.setAttribute('data-dynamic-popup', this.__uid)
 
       var popupContent = document.createElement('div')
-      popupContent.classList.add(
-        this.contentBase, this.contentCustom)
+      popupContent.classList.add(this.contentBase)
+      this.contentCustom && popupContent.classList.add(this.contentCustom)
       popupContent.style.position = 'relative'
       popupContent.innerHTML = this.content
 
@@ -336,7 +336,8 @@
       this.chevron.setAttribute('height', `${this.chevronWidth}`)
       this.chevron.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink")
 
-      this.chevron.classList.add(this.chevronBase, this.chevronCustom)
+      this.chevron.classList.add(this.chevronBase)
+      this.chevronCustom && popupContent.classList.add(this.chevronCustom)
 
   var polygon = document.createElementNS('http://www.w3.org/2000/svg','polygon');
       polygon.setAttribute('points', `${this.chevronWidth / 2},${this.chevronWidth / 1.8} 0,${this.chevronWidth} ${this.chevronWidth},${this.chevronWidth}`)

@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
     return document.querySelectorAll(selector)
   }
 
-  new Popup({
+  new DynamicPopup({
     el: dom('#example-1'),
     className: 'ex-1',
     content: '<h1>Hello World</h1>' +
@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
     chevronWidth: 20
   })
 
-  new Popup({
+  new DynamicPopup({
     el: dom('#example-2'),
     className: 'ex-2',
     content: '<img src="http://lorempixel.com/300/300" />',
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
     chevronWidth: 7
   })
 
-  new Popup({
+  new DynamicPopup({
     el: dom('#example-3'),
     className: 'ex-3',
     content: '<img src="http://lorempixel.com/100/100" />',
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
     chevronWidth: 7
   })
 
-  new Popup({
+  new DynamicPopup({
     el: dom('#example-4'),
     className: 'ex-4',
     content: '<img src="http://lorempixel.com/400/400" />',

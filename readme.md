@@ -26,15 +26,54 @@ and
 ```js
 new DynamicPopup({
   el: document.getElementById('example-target'),
-  className: 'example-popup', // optional
-  content: 'hello', // HTML markup
-  direction: 'right' // optional, can also be 'left', 'bottom' and top.
-  chevronWidth: 16 // optional
+  content: '<p>hello</p>',
+  className: 'my-example-popup',
+  direction: 'right',
+  chevronWidth: 16,
+  enablePrefetch: true
 })
 
 ```
 
-## Customize
+## Options
+
+Only required options are `el` and `content` to get DynamicPopup properly work.
+Rest is optional.
+
+`el`: Target element. When clicked, DynamicPopup will appear.
+
+`content`: What will appear in popup. Can be any markup code.
+
+`className | optional`: This can be either a string or an array of className strings.
+You will have individual CSS selectors for each of them. e.g:
+
+```js
+DynamicPopup({
+ // ...
+ className: ['my-example-popup', 'my-info-popup']
+ // ...
+})
+```
+
+```css
+.my-example-popup {/*...*/}
+.my-example-popup__content {/*...*/}
+.my-example-popup__chevron {/*...*/}
+
+.my-info-popup {/*...*/}
+.my-info-popup__content {/*...*/}
+.my-info-popup__chevron {/*...*/}
+```
+
+`direction | optional`: What direction popup will appear to.
+Can be 'top', 'left', 'right', 'bottom'. Default: 'bottom'.
+
+`chevronWidth | optional`: Size of arrow vector. Default: 12
+
+`enablePrefetch | optional`: If enabled, any external sources found in content will be
+fetched before popup is visible. Can be used to enhance experience. Default: false
+
+## Styling
 
 You can override default popup style.
 
@@ -50,12 +89,12 @@ You can override a specific popup
 .my-example-popup {/*...*/}
 .my-example-popup__content {/*...*/}
 .my-example-popup__chevron {/*...*/}
-}
 ```
 
 ## Notes
 
-You can destroy DynamicPopup:
+DynamicPopup will destroy itself when clicked outside of popup but you may want
+to destroy it yourself in some circumstances. In such cases, you can use:
 
 ```js
 var myPopup = new DynamicPopup(/*...*/)
@@ -63,4 +102,4 @@ var myPopup = new DynamicPopup(/*...*/)
 myPopup.destroy()
 ```
 
-This will unbind all events and remove popup from DOM.
+This will remove popup and its bindings from DOM.

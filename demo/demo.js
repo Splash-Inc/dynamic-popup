@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   new DynamicPopup({
     el: dom('#example-1'),
-    className: 'ex-1',
+    className: ['ex-1', 'lorem'],
     content: '<h1>Hello World</h1>' +
     '<p>' +
       'Eros et accumsan; et iusto odio dignissim qui ' +
@@ -18,7 +18,8 @@ document.addEventListener('DOMContentLoaded', function () {
       'dolore! Facit eorum claritatem' +
     '</p>',
     direction: 'bottom',
-    chevronWidth: 20
+    chevronWidth: 20,
+    enablePrefetch: true
   })
 
   new DynamicPopup({
@@ -26,15 +27,17 @@ document.addEventListener('DOMContentLoaded', function () {
     className: 'ex-2',
     content: '<img src="http://lorempixel.com/300/300" />',
     direction: 'right',
-    chevronWidth: 7
+    chevronWidth: 7,
+    enablePrefetch: true
   })
 
   new DynamicPopup({
     el: dom('#example-3'),
-    className: 'ex-3',
+    className: ['ex-3', 'ipsum'],
     content: '<img src="http://lorempixel.com/100/100" />',
     direction: 'top',
-    chevronWidth: 7
+    chevronWidth: 7,
+    enablePrefetch: true
   })
 
   new DynamicPopup({
@@ -42,7 +45,8 @@ document.addEventListener('DOMContentLoaded', function () {
     className: 'ex-4',
     content: '<img src="http://lorempixel.com/400/400" />',
     direction: 'bottom',
-    chevronWidth: 7
+    chevronWidth: 7,
+    enablePrefetch: false
   })
 
 })

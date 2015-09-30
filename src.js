@@ -43,19 +43,18 @@
       this.__uid = new Date().getTime()
       this.el = options.el
       this.content = options.content
-      this.className = options.className
+      this.classes = typeof options.className === 'string' ?
+          [options.className] : options.className
       this.direction = options.direction || 'bottom'
       this.popup = null
       this.chevron = null
       this.chevronWidth = options.chevronWidth || 12
+      this.prefetch = options.enablePrefetch
 
       // Classes
       this.baseClass = 'dynamic-popup'
       this.contentBase = `${this.baseClass}__content`
       this.chevronBase = `${this.baseClass}__chevron`
-      this.popupCustom = this.className || ''
-      this.contentCustom = this.className ? this.className + '__content' : ''
-      this.chevronCustom = this.className ? this.className + '__chevron' : ''
 
       this.position = () => {this._position()}
       this.onClickEl = () => {this._onClickEl()}
@@ -89,8 +88,10 @@
         ]
       }
 
-      // Styles
       this.stylize()
+      if (this.prefetch) {
+        this.preFetchResources()
+      }
 
       return this
     }
@@ -139,6 +140,51 @@
           }
         }
       }
+    }
+
+    preFetchResources() {
+      var container = document.createElement('div')
+      container.innerHTML = this.content
+      var images = [].slice.call(container.querySelectorAll('img'))
+
+      for (let img of images) {
+        let fetched = new Image()
+        fetched.src = img.src
+      }
+    }
+
+    render() {
+      this.popup = document.createElement('div')
+      this.popup.setAttribute('data-dynamic-popup', this.__uid)
+      this.popup.classList.add(this.baseClass)
+
+      this.popupContent = document.createElement('div')
+      this.popupContent.style.position = 'relative'
+      this.popupContent.innerHTML = this.content
+      this.popupContent.classList.add(this.contentBase)
+
+      this.chevron = document.createElementNS("http://www.w3.org/2000/svg", "svg")
+      this.chevron.setAttribute('width', `${this.chevronWidth}`)
+      this.chevron.setAttribute('height', `${this.chevronWidth}`)
+      this.chevron.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink")
+      this.chevron.classList.add(this.chevronBase)
+
+      var polygon = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+      polygon.setAttribute('points', `${this.chevronWidth / 2},${this.chevronWidth / 1.8} 0,${this.chevronWidth} ${this.chevronWidth},${this.chevronWidth}`)
+      polygon.setAttribute('style', 'fill:currentColor')
+      this.chevron.appendChild(polygon)
+
+      for (let className of this.classes) {
+        this.popup.classList.add(className)
+        this.popupContent.classList.add(`${className}__content`)
+        this.chevron.classList.add(`${className}__chevron`)
+      }
+
+      this.popup.appendChild(this.popupContent)
+      this.popup.appendChild(this.chevron)
+
+      document.body.appendChild(this.popup)
+      this.position()
     }
 
     destroy() {
@@ -318,39 +364,6 @@
       }
       this.popup.style.left = `${posX}px`
       this.popup.style.top = `${posY}px`
-    }
-
-    render() {
-      this.popup = document.createElement('div')
-      this.popup.classList.add(this.baseClass)
-      this.popupCustom && this.popup.classList.add(this.popupCustom)
-      this.popup.setAttribute('data-dynamic-popup', this.__uid)
-
-      var popupContent = document.createElement('div')
-      popupContent.classList.add(this.contentBase)
-      this.contentCustom && popupContent.classList.add(this.contentCustom)
-      popupContent.style.position = 'relative'
-      popupContent.innerHTML = this.content
-
-      this.chevron = document.createElementNS("http://www.w3.org/2000/svg", "svg")
-      this.chevron.setAttribute('width', `${this.chevronWidth}`)
-      this.chevron.setAttribute('height', `${this.chevronWidth}`)
-      this.chevron.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink")
-
-      this.chevron.classList.add(this.chevronBase)
-      this.chevronCustom && popupContent.classList.add(this.chevronCustom)
-
-  var polygon = document.createElementNS('http://www.w3.org/2000/svg','polygon');
-      polygon.setAttribute('points', `${this.chevronWidth / 2},${this.chevronWidth / 1.8} 0,${this.chevronWidth} ${this.chevronWidth},${this.chevronWidth}`)
-      polygon.setAttribute('style', 'fill:currentColor')
-      this.chevron.appendChild(polygon)
-
-      this.popup.appendChild(popupContent)
-      this.popup.appendChild(this.chevron)
-
-      document.body.appendChild(this.popup)
-
-      this.position()
     }
   }
 

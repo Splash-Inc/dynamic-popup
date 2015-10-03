@@ -49,7 +49,7 @@
       this.popup = null
       this.chevron = null
       this.chevronWidth = options.chevronWidth || 12
-      this.prefetch = options.enablePrefetch
+      this.prefetch = options.prefetch
 
       // Classes
       this.baseClass = 'dynamic-popup'
@@ -236,21 +236,31 @@
       var popup = this.popup;
       var direction = this.direction;
 
-      var targetTop = el.offsetTop;
-      var targetLeft = el.offsetLeft;
-      var targetWidth = el.offsetWidth;
-      var targetHeight = el.offsetHeight;
-
-      var popupTop = popup.offsetTop;
-      var popupWidth = popup.offsetWidth;
-      var popupHeight = popup.offsetHeight;
-
       var scrollTop = Math.max(
-        document.body.scrollTop,
-        document.documentElement.scrollTop
+          document.body.scrollTop,
+          document.documentElement.scrollTop
       )
 
-      var gapWidth = 10;
+      var scrollLeft = Math.max(
+          document.body.scrollLeft,
+          document.documentElement.scrollLeft
+      )
+
+      var windowWidth = window.innerWidth
+      var windowHeight = window.innerHeight
+
+      var targetPosition = el.getBoundingClientRect()
+      var popupPosition = popup.getBoundingClientRect()
+
+      var targetTop = targetPosition.top + scrollTop
+      var targetLeft = targetPosition.left + scrollLeft
+      var targetWidth = targetPosition.width
+      var targetHeight = targetPosition.height
+
+      var popupWidth = popupPosition.width
+      var popupHeight = popupPosition.height
+
+      var gapWidth = 10
       var chevronWidth = this.chevronWidth
 
       var top = {
@@ -271,27 +281,27 @@
         top: {
           'top': `auto`,
           'bottom': `-${chevronWidth}px`,
-          'left': `${targetLeft - left.top + (targetWidth / 2)}px`,
+          'left': `${targetLeft - left.top + (targetWidth / 2) - (chevronWidth / 2)}px`,
           '-webkit-transform': 'rotate(180deg)',
           'transform': 'rotate(180deg)'
         },
         bottom: {
           'bottom': `auto`,
           'top': `-${chevronWidth}px`,
-          'left': `${targetLeft - left.top + (targetWidth / 2)}px`,
+          'left': `${targetLeft - left.top + (targetWidth / 2) - (chevronWidth / 2)}px`,
           '-webkit-transform': 'rotate(0deg)',
           'transform': 'rotate(0deg)'
         },
         left: {
           'bottom': `auto`,
-          'top': `${(targetTop - popupTop) + (targetHeight / 2)}px`,
+          'top': `${(popupHeight / 2) - (chevronWidth / 2)}px`,
           'left': `${popupWidth}px`,
           '-webkit-transform': 'rotate(90deg)',
           'transform': 'rotate(90deg)'
         },
         right: {
           'bottom': `auto`,
-          'top': `${(targetTop - popupTop) + (targetHeight / 2)}px`,
+          'top': `${(popupHeight / 2) - (chevronWidth / 2)}px`,
           'left': `-${chevronWidth}px`,
           '-webkit-transform': 'rotate(-90deg)',
           'transform': 'rotate(-90deg)'
@@ -302,11 +312,16 @@
       var posY = top[direction]
       var chevronPos = chevron[direction]
 
-      if (posX <= 0) {
+      var doesOverflowToLeft = posX <= 0
+      var doesOverflowToRight = posX + popupWidth >= windowWidth
+      var doesOverflowToTop = posY - scrollTop <= 0
+      var doesOverflowToBottom = (posY + popupHeight) - scrollTop >= windowHeight
+
+      if (doesOverflowToLeft) {
         if (direction === 'top' ||
             direction === 'bottom') {
           posX -= posX
-          chevronPos.left = `${targetLeft + (targetWidth / 2)}px`
+          chevronPos.left = `${targetLeft + (targetWidth / 2) - (chevronWidth / 2)}px`
         }
         if (this.direction === 'left') {
           posX = left.right
@@ -314,10 +329,10 @@
         }
       }
 
-      if (posX + popupWidth >= window.innerWidth) {
+      if (doesOverflowToRight) {
         if (direction === 'top' ||
             direction === 'bottom') {
-          posX += (window.innerWidth - (posX + popupWidth))
+          posX += (windowWidth - (posX + popupWidth))
           chevronPos.left = `${(targetLeft - posX) + (targetWidth / 2) - (chevronWidth / 2)}px`
         }
         if (direction === 'right') {
@@ -328,32 +343,37 @@
         }
       }
 
-      if (posY - scrollTop <= 0) {
+      if (doesOverflowToTop) {
         if (direction === 'right' ||
             direction === 'left') {
-
           let diff = scrollTop - posY
           if (!(diff > popupHeight / 4)) {
             posY += diff
+            chevronPos.top = `${parseInt(chevronPos.top, 10) - diff}px`
           }
         }
         if (direction === 'top') {
           posY = top.bottom
+          let _chevronLeft = chevronPos.left
           chevronPos = chevron.bottom
+          chevronPos.left = _chevronLeft
         }
       }
 
-      if ((posY + popupHeight) - scrollTop >= window.innerHeight) {
+      if (doesOverflowToBottom) {
         if (direction === 'right' ||
             direction === 'left') {
-          let diff = ((posY + popupHeight) - scrollTop - window.innerHeight)
+          let diff = ((posY + popupHeight) - scrollTop - windowHeight)
           if (!(diff > popupHeight / 4)) {
             posY -= diff
+            chevronPos.top = `${parseInt(chevronPos.top, 10) + diff}px`
           }
         }
         if (direction === 'bottom') {
           posY = top.top
+          let _chevronLeft = chevronPos.left
           chevronPos = chevron.top
+          chevronPos.left = _chevronLeft
         }
       }
 

@@ -30,7 +30,7 @@ new DynamicPopup({
   className: 'my-example-popup',
   direction: 'right',
   chevronWidth: 16,
-  enablePrefetch: true
+  prefetch: true
 })
 
 ```
@@ -70,7 +70,7 @@ Can be 'top', 'left', 'right', 'bottom'. Default: 'bottom'.
 
 `chevronWidth | optional`: Size of arrow vector. Default: 12
 
-`enablePrefetch | optional`: If enabled, any external sources found in content will be
+`prefetch | optional`: If enabled, any external sources found in content will be
 fetched before popup is visible. Can be used to enhance experience. Default: false
 
 ## Styling

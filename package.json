@@ -1,15 +1,16 @@
 {
   "name": "dynamic-popup",
-  "version": "1.0.7",
-  "description": "DynamicPopup relocate itself depending on the viewport's bounds.",
+  "version": "1.1.0",
+  "description": "DynamicPopup relocates itself depending on the viewport's bounds.",
   "repository": {
     "type" : "git",
     "url" : "https://github.com/Splash-Inc/dynamic-popup.git"
   },
   "main": "dynamic-popup.min.js",
   "scripts": {
+    "watch": "watch 'npm run build' ./src",
     "build": "npm run babel && npm run uglify",
-    "babel": "babel --no-comments --compact=true src.js -o dynamic-popup.min.js",
+    "babel": "babel --no-comments --compact=true ./src/src.js -o dynamic-popup.min.js",
     "uglify": "uglify -s dynamic-popup.min.js -o dynamic-popup.min.js"
   },
   "keywords": [

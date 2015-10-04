@@ -38,6 +38,38 @@
   }
 
 })(function () {
+  // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+  // http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
+
+  // requestAnimationFrame polyfill by Erik Möller. fixes from Paul Irish and Tino Zijdel
+
+  // MIT license
+
+  (function() {
+    var lastTime = 0;
+    var vendors = ['ms', 'moz', 'webkit', 'o'];
+    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+      window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+      window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame']
+          || window[vendors[x]+'CancelRequestAnimationFrame'];
+    }
+
+    if (!window.requestAnimationFrame)
+      window.requestAnimationFrame = function(callback, element) {
+        var currTime = new Date().getTime();
+        var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+        var id = window.setTimeout(function() { callback(currTime + timeToCall); },
+            timeToCall);
+        lastTime = currTime + timeToCall;
+        return id;
+      };
+
+    if (!window.cancelAnimationFrame)
+      window.cancelAnimationFrame = function(id) {
+        clearTimeout(id);
+      };
+  }());
+
   class Popup {
     constructor (options) {
       this.__uid = new Date().getTime()
@@ -68,8 +100,44 @@
           'position: absolute',
           'background: rgba(0, 0, 0, .85)',
           'color: #fff',
-          '-webkit-transition: all .1s',
-          'transition: all .1s'
+          //'-webkit-transition: all .3s',
+          //'transition: all .3s',
+          'will-change: top, left',
+          '-webkit-transform: translateZ(0)',
+          'transform: translateZ(0)'
+        ],
+        [`.${this.contentBase} h1,
+          .${this.contentBase} h2,
+          .${this.contentBase} h3,
+          .${this.contentBase} h4,
+          .${this.contentBase} h4,
+          .${this.contentBase} h5,
+          .${this.contentBase} h6,
+          .${this.contentBase} blockquote,
+          .${this.contentBase} pre,
+          .${this.contentBase} span
+          .${this.contentBase} dl,
+          .${this.contentBase} dt,
+          .${this.contentBase} dd,
+          .${this.contentBase} ol,
+          .${this.contentBase} ul,
+          .${this.contentBase} li,
+          .${this.contentBase} table,
+          .${this.contentBase} caption,
+          .${this.contentBase} tbody,
+          .${this.contentBase} tfoot,
+          .${this.contentBase} thead,
+          .${this.contentBase} tr,
+          .${this.contentBase} th,
+          .${this.contentBase} td,
+          .${this.contentBase} p,
+          .${this.contentBase} img,
+          .${this.contentBase} ul,
+          .${this.contentBase} ol,
+          .${this.contentBase} dl
+          .${this.contentBase} li`]: [
+          'margin: 0',
+          'padding: 0'
         ],
         [`.${this.baseClass} img`]: [
           'vertical-align: middle'
@@ -77,7 +145,10 @@
         [`.${this.chevronBase}`]: [
           'position: absolute',
           'color: rgba(0, 0, 0, .85)',
-          `width: ${this.defaultChevronWidth}px`
+          `width: ${this.defaultChevronWidth}px`,
+          'will-change: top, left',
+          '-webkit-transform: translateZ(0)',
+          'transform: translateZ(0)'
         ]
       }
 
@@ -233,159 +304,175 @@
       return matched;
     }
 
+    readDOMValues(callback) {
+      setTimeout(() => {
+        var scrollTop = (() => {
+          var s1 = document.body.scrollTop
+          var s2 = document.documentElement.scrollTop
+          return Math.max(s1, s2)
+        })()
+
+        var scrollLeft = (() => {
+          var s1 = document.body.scrollLeft
+          var s2 = document.documentElement.scrollLeft
+          return Math.max(s1, s2)
+        })()
+
+        var targetPosition = this.el.getBoundingClientRect()
+        var popupPosition = this.popup.getBoundingClientRect()
+        var gapWidth = this.chevron.getBoundingClientRect().width * .8
+
+        callback({
+          scrollTop,
+          scrollLeft,
+          targetPosition,
+          popupPosition,
+          gapWidth
+        })
+      }, 1)
+    }
+
     _position() {
-      var el = this.el
-      var popup = this.popup
-      var chevron = this.chevron
-      var direction = this.direction
+      requestAnimationFrame(() => {
+        this.readDOMValues((values) => {
+          let {scrollTop, scrollLeft, targetPosition, popupPosition, gapWidth} = values
 
-      var scrollTop = Math.max(
-          document.body.scrollTop,
-          document.documentElement.scrollTop
-      )
+          var direction = this.direction
+          var windowWidth = window.innerWidth
+          var windowHeight = window.innerHeight
 
-      var scrollLeft = Math.max(
-          document.body.scrollLeft,
-          document.documentElement.scrollLeft
-      )
+          var targetTop = targetPosition.top + scrollTop
+          var targetLeft = targetPosition.left + scrollLeft
+          var targetWidth = targetPosition.width
+          var targetHeight = targetPosition.height
 
-      var windowWidth = window.innerWidth
-      var windowHeight = window.innerHeight
+          var popupWidth = popupPosition.width
+          var popupHeight = popupPosition.height
 
-      var targetPosition = el.getBoundingClientRect()
-      var popupPosition = popup.getBoundingClientRect()
-
-      var targetTop = targetPosition.top + scrollTop
-      var targetLeft = targetPosition.left + scrollLeft
-      var targetWidth = targetPosition.width
-      var targetHeight = targetPosition.height
-
-      var popupWidth = popupPosition.width
-      var popupHeight = popupPosition.height
-
-      var gapWidth = chevron.getBoundingClientRect().width * .8
-
-      var top = {
-        top: targetTop - popupHeight - gapWidth,
-        bottom: targetTop + targetHeight + gapWidth,
-        left: targetTop + (targetHeight / 2) - (popupHeight / 2),
-        right: targetTop + (targetHeight / 2) - (popupHeight / 2)
-      }
-
-      var left = {
-        top: targetLeft + (targetWidth / 2) - (popupWidth / 2),
-        bottom: targetLeft + (targetWidth / 2) - (popupWidth / 2),
-        left: targetLeft - popupWidth - gapWidth,
-        right: targetLeft + targetWidth + gapWidth
-      }
-
-      var chevronStyle = {
-        top: {
-          'top': `auto`,
-          'bottom': `0`,
-          'left': `${targetLeft - left.top + (targetWidth / 2)}px`,
-          '-webkit-transform': 'rotate(180deg) translateX(50%) translateY(-100%)',
-          'transform': 'rotate(180deg) translateX(50%) translateY(-100%)'
-        },
-        bottom: {
-          'bottom': `auto`,
-          'top': `0`,
-          'left': `${targetLeft - left.top + (targetWidth / 2)}px`,
-          '-webkit-transform': 'rotate(0deg) translateX(-50%) translateY(-100%)',
-          'transform': 'rotate(0deg) translateX(-50%) translateY(-100%)'
-        },
-        left: {
-          'bottom': `auto`,
-          'top': `${(popupHeight / 2)}px`,
-          'left': `${popupWidth}px`,
-          '-webkit-transform': 'rotate(90deg) translate(-50%, 0%)',
-          'transform': 'rotate(90deg) translate(-50%, 0%)'
-        },
-        right: {
-          'bottom': `auto`,
-          'top': `${(popupHeight / 2)}px`,
-          'left': `0`,
-          '-webkit-transform': 'rotate(-90deg) translate(50%, -100%)',
-          'transform': 'rotate(-90deg) translate(50%, -100%)'
-        }
-      }
-
-      var posX = left[direction]
-      var posY = top[direction]
-      var chevronPos = chevronStyle[direction]
-
-      var doesOverflowToLeft = posX <= 0
-      var doesOverflowToRight = posX + popupWidth >= windowWidth
-      var doesOverflowToTop = posY - scrollTop <= 0
-      var doesOverflowToBottom = (posY + popupHeight) - scrollTop >= windowHeight
-
-      if (doesOverflowToLeft) {
-        if (direction === 'top' ||
-            direction === 'bottom') {
-          posX -= posX
-          chevronPos.left = `${targetLeft + (targetWidth / 2)}px`
-        }
-        if (this.direction === 'left') {
-          posX = left.right
-          chevronPos = chevronStyle.right
-        }
-      }
-
-      if (doesOverflowToRight) {
-        if (direction === 'top' ||
-            direction === 'bottom') {
-          posX += (windowWidth - (posX + popupWidth))
-          chevronPos.left = `${(targetLeft - posX) + (targetWidth / 2)}px`
-        }
-        if (direction === 'right') {
-          if (left.left > 0) {
-            posX = left.left
-            chevronPos = chevronStyle.left
+          var top = {
+            top: targetTop - popupHeight - gapWidth,
+            bottom: targetTop + targetHeight + gapWidth,
+            left: targetTop + (targetHeight / 2) - (popupHeight / 2),
+            right: targetTop + (targetHeight / 2) - (popupHeight / 2)
           }
-        }
-      }
 
-      if (doesOverflowToTop) {
-        if (direction === 'right' ||
-            direction === 'left') {
-          let diff = scrollTop - posY
-          if (!(diff > popupHeight / 4)) {
-            posY += diff
-            chevronPos.top = `${parseInt(chevronPos.top, 10) - diff}px`
+          var left = {
+            top: targetLeft + (targetWidth / 2) - (popupWidth / 2),
+            bottom: targetLeft + (targetWidth / 2) - (popupWidth / 2),
+            left: targetLeft - popupWidth - gapWidth,
+            right: targetLeft + targetWidth + gapWidth
           }
-        }
-        if (direction === 'top') {
-          posY = top.bottom
-          let _chevronLeft = chevronPos.left
-          chevronPos = chevronStyle.bottom
-          chevronPos.left = _chevronLeft
-        }
-      }
 
-      if (doesOverflowToBottom) {
-        if (direction === 'right' ||
-            direction === 'left') {
-          let diff = ((posY + popupHeight) - scrollTop - windowHeight)
-          if (!(diff > popupHeight / 4)) {
-            posY -= diff
-            chevronPos.top = `${parseInt(chevronPos.top, 10) + diff}px`
+          var chevronStyle = {
+            top: {
+              'top': `auto`,
+              'bottom': `0`,
+              'left': `${targetLeft - left.top + (targetWidth / 2)}px`,
+              '-webkit-transform': 'rotate(180deg) translate(50%, -100%) translateZ(0)',
+              'transform': 'rotate(180deg) translate(50%, -100%) translateZ(0)'
+            },
+            bottom: {
+              'bottom': `auto`,
+              'top': `0`,
+              'left': `${targetLeft - left.top + (targetWidth / 2)}px`,
+              '-webkit-transform': 'rotate(0deg) translate(-50%, -100%) translateZ(0)',
+              'transform': 'rotate(0deg) translate(-50%, -100%) translateZ(0)'
+            },
+            left: {
+              'bottom': `auto`,
+              'top': `${(popupHeight / 2)}px`,
+              'left': `${popupWidth}px`,
+              '-webkit-transform': 'rotate(90deg) translate(-50%, 0%) translateZ(0)',
+              'transform': 'rotate(90deg) translate(-50%, 0%) translateZ(0)'
+            },
+            right: {
+              'bottom': `auto`,
+              'top': `${(popupHeight / 2)}px`,
+              'left': `0`,
+              '-webkit-transform': 'rotate(-90deg) translate(50%, -100%) translateZ(0)',
+              'transform': 'rotate(-90deg) translate(50%, -100%) translateZ(0)'
+            }
           }
-        }
-        if (direction === 'bottom') {
-          posY = top.top
-          let _chevronLeft = chevronPos.left
-          chevronPos = chevronStyle.top
-          chevronPos.left = _chevronLeft
-        }
-      }
 
-      for (var rule in chevronPos) {
-        if (chevronPos.hasOwnProperty(rule)) {
-          this.chevron.style[rule] = chevronPos[rule]
-        }
-      }
-      this.popup.style.left = `${posX}px`
-      this.popup.style.top = `${posY}px`
+          var posX = left[direction]
+          var posY = top[direction]
+          var chevronPos = chevronStyle[direction]
+
+          var doesOverflowToLeft = posX <= 0
+          var doesOverflowToRight = posX + popupWidth >= windowWidth
+          var doesOverflowToTop = posY - scrollTop <= 0
+          var doesOverflowToBottom = (posY + popupHeight) - scrollTop >= windowHeight
+
+          if (doesOverflowToLeft) {
+            if (direction === 'top' ||
+                direction === 'bottom') {
+              posX -= posX
+              chevronPos.left = `${targetLeft + (targetWidth / 2)}px`
+            }
+            if (this.direction === 'left') {
+              posX = left.right
+              chevronPos = chevronStyle.right
+            }
+          }
+
+          if (doesOverflowToRight) {
+            if (direction === 'top' ||
+                direction === 'bottom') {
+              posX += (windowWidth - (posX + popupWidth))
+              chevronPos.left = `${(targetLeft - posX) + (targetWidth / 2)}px`
+            }
+            if (direction === 'right') {
+              if (left.left > 0) {
+                posX = left.left
+                chevronPos = chevronStyle.left
+              }
+            }
+          }
+
+          if (doesOverflowToTop) {
+            if (direction === 'right' ||
+                direction === 'left') {
+              let diff = scrollTop - posY
+              if (!(diff > popupHeight / 4)) {
+                posY += diff
+                chevronPos.top = `${parseInt(chevronPos.top, 10) - diff}px`
+              }
+            }
+            if (direction === 'top') {
+              posY = top.bottom
+              let _chevronLeft = chevronPos.left
+              chevronPos = chevronStyle.bottom
+              chevronPos.left = _chevronLeft
+            }
+          }
+
+          if (doesOverflowToBottom) {
+            if (direction === 'right' ||
+                direction === 'left') {
+              let diff = ((posY + popupHeight) - scrollTop - windowHeight)
+              if (!(diff > popupHeight / 4)) {
+                posY -= diff
+                chevronPos.top = `${parseInt(chevronPos.top, 10) + diff}px`
+              }
+            }
+            if (direction === 'bottom') {
+              posY = top.top
+              let _chevronLeft = chevronPos.left
+              chevronPos = chevronStyle.top
+              chevronPos.left = _chevronLeft
+            }
+          }
+
+          requestAnimationFrame(() => {
+            this.popup.style.cssText += `; left: ${posX}px; top: ${posY}px`
+            for (var rule in chevronPos) {
+              if (chevronPos.hasOwnProperty(rule)) {
+                this.chevron.style.cssText += `; ${rule}: ${chevronPos[rule]}`
+              }
+            }
+          })
+        })
+      })
     }
   }
 

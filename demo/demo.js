@@ -18,34 +18,30 @@ document.addEventListener('DOMContentLoaded', function () {
         'blandit praesent luptatum zzril delenit augue duis ' +
         'dolore! Facit eorum claritatem' +
       '</p>',
-      direction: 'left',
-      chevronWidth: 20
+      direction: 'left'
     },
 
     '2': {
       el: dom('#example-2'),
       className: 'ex-2',
-      content: '<img src="http://lorempixel.com/100/100" />',
+      content: '<img src="http://placehold.it/100x100" />',
       direction: 'left',
-      chevronWidth: 16,
       prefetch: true
     },
 
     '3': {
       el: dom('#example-3'),
       className: ['ex-3', 'ipsum'],
-      content: '<img src="http://lorempixel.com/200/200" />',
+      content: '<img src="http://placehold.it/200x200" />',
       direction: 'left',
-      chevronWidth: 7,
       prefetch: true
     },
 
     '4': {
       el: dom('#example-4'),
       className: 'ex-4',
-      content: '<img src="http://lorempixel.com/400/400" />',
-      direction: 'bottom',
-      chevronWidth: 15
+      content: '<img src="http://placehold.it/400x400" />',
+      direction: 'bottom'
     },
 
     '5': {
@@ -57,16 +53,14 @@ document.addEventListener('DOMContentLoaded', function () {
         'blandit praesent luptatum zzril delenit augue duis ' +
         'dolore! Facit eorum claritatem' +
       '</p>',
-      direction: 'bottom',
-      chevronWidth: 22
+      direction: 'bottom'
     },
 
     '6': {
       el: dom('#example-6'),
       className: 'ex-6',
-      content: '<img src="http://lorempixel.com/800/800" />',
+      content: '<img src="http://placehold.it/800x800" />',
       direction: 'right',
-      chevronWidth: 6,
       prefetch: true
     },
 
@@ -79,16 +73,14 @@ document.addEventListener('DOMContentLoaded', function () {
         'blandit praesent luptatum zzril delenit augue duis ' +
         'dolore! Facit eorum claritatem' +
       '</p>',
-      direction: 'left',
-      chevronWidth: 25
+      direction: 'left'
     },
 
     '8': {
       el: dom('#example-8'),
       className: 'ex-8',
-      content: '<img src="http://lorempixel.com/150/150" />',
+      content: '<img src="http://placehold.it/150x150" />',
       direction: 'top',
-      chevronWidth: 9,
       prefetch: true
     },
 
@@ -101,16 +93,14 @@ document.addEventListener('DOMContentLoaded', function () {
         'blandit praesent luptatum zzril delenit augue duis ' +
         'dolore! Facit eorum claritatem' +
       '</p>',
-      direction: 'bottom',
-      chevronWidth: 13
+      direction: 'bottom'
     },
 
     '10': {
       el: dom('#example-10'),
       className: 'ex-10',
-      content: '<img src="http://lorempixel.com/450/450" />',
-      direction: 'right',
-      chevronWidth: 7
+      content: '<img src="http://placehold.it/450x450" />',
+      direction: 'right'
     },
 
     '11': {
@@ -122,8 +112,7 @@ document.addEventListener('DOMContentLoaded', function () {
         'blandit praesent luptatum zzril delenit augue duis ' +
         'dolore! Facit eorum claritatem' +
       '</p>',
-      direction: 'top',
-      chevronWidth: 15
+      direction: 'top'
     },
 
     '12': {
@@ -135,16 +124,14 @@ document.addEventListener('DOMContentLoaded', function () {
         'blandit praesent luptatum zzril delenit augue duis ' +
         'dolore! Facit eorum claritatem' +
       '</p>',
-      direction: 'top',
-      chevronWidth: 20
+      direction: 'top'
     },
 
     '13': {
       el: dom('#example-13'),
       className: 'ex-13',
-      content: '<img src="http://lorempixel.com/800/800" />',
+      content: '<img src="http://placehold.it/800x800" />',
       direction: 'right',
-      chevronWidth: 6,
       prefetch: true
     },
 
@@ -157,16 +144,14 @@ document.addEventListener('DOMContentLoaded', function () {
         'blandit praesent luptatum zzril delenit augue duis ' +
         'dolore! Facit eorum claritatem' +
       '</p>',
-      direction: 'left',
-      chevronWidth: 25
+      direction: 'left'
     },
 
     '15': {
       el: dom('#example-15'),
       className: 'ex-15',
-      content: '<img src="http://lorempixel.com/150/150" />',
+      content: '<img src="http://placehold.it/150x150" />',
       direction: 'top',
-      chevronWidth: 9,
       prefetch: true
     },
 
@@ -179,16 +164,14 @@ document.addEventListener('DOMContentLoaded', function () {
         'blandit praesent luptatum zzril delenit augue duis ' +
         'dolore! Facit eorum claritatem' +
       '</p>',
-      direction: 'bottom',
-      chevronWidth: 13
+      direction: 'bottom'
     },
 
     '17': {
       el: dom('#example-17'),
       className: 'ex-17',
-      content: '<img src="http://lorempixel.com/450/450" />',
-      direction: 'right',
-      chevronWidth: 7
+      content: '<img src="http://placehold.it/450x450" />',
+      direction: 'right'
     },
 
     '18': {
@@ -200,16 +183,50 @@ document.addEventListener('DOMContentLoaded', function () {
         'blandit praesent luptatum zzril delenit augue duis ' +
         'dolore! Facit eorum claritatem' +
       '</p>',
-      direction: 'top',
-      chevronWidth: 15
+      direction: 'top'
     },
 
     '19': {
       el: dom('#example-19'),
       className: ['ex-19', 'adipiscing'],
-      content: '<img src="http://lorempixel.com/450/450" />',
+      content: '<img src="http://placehold.it/450x450" />',
       direction: 'right',
-      chevronWidth: 15,
+      prefetch: true
+    },
+
+    '20': {
+      el: dom('#example-20'),
+      className: ['ex-20', 'lorem'],
+      content: '<h1>Hello World</h1>' +
+      '<p>' +
+        'Eros et accumsan; et iusto odio dignissim qui ' +
+        'blandit praesent luptatum zzril delenit augue duis ' +
+        'dolore! Facit eorum claritatem' +
+      '</p>',
+      direction: 'top'
+    },
+
+    '21': {
+      el: dom('#example-21'),
+      className: ['ex-21', 'ipsum'],
+      content: '<img src="http://placehold.it/450x450" />',
+      direction: 'left',
+      prefetch: true
+    },
+
+    '22': {
+      el: dom('#example-22'),
+      className: ['ex-22', 'dolor'],
+      content: '<img src="http://placehold.it/250x250" />',
+      direction: 'right',
+      prefetch: true
+    },
+
+    '23': {
+      el: dom('#example-23'),
+      className: ['ex-23', 'sit'],
+      content: '<img src="http://placehold.it/300x300" />',
+      direction: 'bottom',
       prefetch: true
     }
   }

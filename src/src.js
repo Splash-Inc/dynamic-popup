@@ -48,7 +48,8 @@
       this.direction = options.direction || 'bottom'
       this.popup = null
       this.chevron = null
-      this.chevronWidth = options.chevronWidth || 12
+      this.defaultChevronWidth = 16
+      this.asyncElements = ['img']
       this.prefetch = options.prefetch
 
       // Classes
@@ -65,26 +66,18 @@
       this.styles = {
         [`.${this.baseClass}`]: [
           'position: absolute',
-          'padding: 10px',
           'background: rgba(0, 0, 0, .85)',
           'color: #fff',
-          'box-shadow: 2px 2px 10px rgba(0, 0, 0, .4)',
-          'webkit-transition: all .1s',
+          '-webkit-transition: all .1s',
           'transition: all .1s'
         ],
-        [`.${this.contentBase}
-        h1, h2, h3, h4, h4, h5, h6,
-        blockquote, pre, span
-        dl, dt, dd, ol, ul, li,
-        table, caption, tbody, tfoot,
-        thead, tr, th, td,
-        p, img, ul, ol, dl li`]: [
-          'margin: 0',
-          'padding: 0'
+        [`.${this.baseClass} img`]: [
+          'vertical-align: middle'
         ],
         [`.${this.chevronBase}`]: [
           'position: absolute',
-          'color: rgba(0, 0, 0, .85)'
+          'color: rgba(0, 0, 0, .85)',
+          `width: ${this.defaultChevronWidth}px`
         ]
       }
 
@@ -100,12 +93,22 @@
       window.addEventListener('resize', this.position)
       window.addEventListener('scroll', this.position)
       document.body.addEventListener('click', this.onClickAnyWhere)
+
+      ;[].forEach.call(this.popup.querySelectorAll(this.asyncElements.join(',')), (el) => {
+        if (!el.complete) {
+          el.addEventListener('load', this.position)
+        }
+      })
     }
 
     unbindEvents() {
       window.removeEventListener('resize', this.position)
       window.removeEventListener('scroll', this.position)
       document.body.removeEventListener('click', this.onClickAnyWhere)
+
+      ;[].forEach.call(this.popup.querySelectorAll(this.asyncElements.join(',')), (el) => {
+        el.removeEventListener('load', this.position)
+      })
     }
 
     stylize() {
@@ -115,6 +118,7 @@
         return
       }
 
+      // see: http://davidwalsh.name/add-rules-stylesheets
       var sheet = (function() {
         var style = document.createElement("style");
         style.id = styleId
@@ -145,12 +149,10 @@
     preFetchResources() {
       var container = document.createElement('div')
       container.innerHTML = this.content
-      var images = [].slice.call(container.querySelectorAll('img'))
-
-      for (let img of images) {
-        let fetched = new Image()
-        fetched.src = img.src
-      }
+      ;[].forEach.call(container.querySelectorAll(this.asyncElements.join(',')), (el) => {
+        let fetched = document.createElement(el.tagName)
+        fetched.src = el.src
+      })
     }
 
     render() {
@@ -164,13 +166,13 @@
       this.popupContent.classList.add(this.contentBase)
 
       this.chevron = document.createElementNS("http://www.w3.org/2000/svg", "svg")
-      this.chevron.setAttribute('width', `${this.chevronWidth}`)
-      this.chevron.setAttribute('height', `${this.chevronWidth}`)
+      this.chevron.setAttribute('viewBox', '0 0 2 2')
+      this.chevron.setAttribute('preserveAspectRatio', 'xMinYMin meet')
       this.chevron.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink")
       this.chevron.classList.add(this.chevronBase)
 
       var polygon = document.createElementNS('http://www.w3.org/2000/svg','polygon');
-      polygon.setAttribute('points', `${this.chevronWidth / 2},${this.chevronWidth / 1.8} 0,${this.chevronWidth} ${this.chevronWidth},${this.chevronWidth}`)
+      polygon.setAttribute('points', `1,0.8 0,2 2,2`)
       polygon.setAttribute('style', 'fill:currentColor')
       this.chevron.appendChild(polygon)
 
@@ -182,8 +184,8 @@
 
       this.popup.appendChild(this.popupContent)
       this.popup.appendChild(this.chevron)
-
       document.body.appendChild(this.popup)
+
       this.position()
     }
 
@@ -232,9 +234,10 @@
     }
 
     _position() {
-      var el = this.el;
-      var popup = this.popup;
-      var direction = this.direction;
+      var el = this.el
+      var popup = this.popup
+      var chevron = this.chevron
+      var direction = this.direction
 
       var scrollTop = Math.max(
           document.body.scrollTop,
@@ -260,8 +263,7 @@
       var popupWidth = popupPosition.width
       var popupHeight = popupPosition.height
 
-      var gapWidth = 10
-      var chevronWidth = this.chevronWidth
+      var gapWidth = chevron.getBoundingClientRect().width * .8
 
       var top = {
         top: targetTop - popupHeight - gapWidth,
@@ -277,40 +279,40 @@
         right: targetLeft + targetWidth + gapWidth
       }
 
-      var chevron = {
+      var chevronStyle = {
         top: {
           'top': `auto`,
-          'bottom': `-${chevronWidth}px`,
-          'left': `${targetLeft - left.top + (targetWidth / 2) - (chevronWidth / 2)}px`,
-          '-webkit-transform': 'rotate(180deg)',
-          'transform': 'rotate(180deg)'
+          'bottom': `0`,
+          'left': `${targetLeft - left.top + (targetWidth / 2)}px`,
+          '-webkit-transform': 'rotate(180deg) translateX(50%) translateY(-100%)',
+          'transform': 'rotate(180deg) translateX(50%) translateY(-100%)'
         },
         bottom: {
           'bottom': `auto`,
-          'top': `-${chevronWidth}px`,
-          'left': `${targetLeft - left.top + (targetWidth / 2) - (chevronWidth / 2)}px`,
-          '-webkit-transform': 'rotate(0deg)',
-          'transform': 'rotate(0deg)'
+          'top': `0`,
+          'left': `${targetLeft - left.top + (targetWidth / 2)}px`,
+          '-webkit-transform': 'rotate(0deg) translateX(-50%) translateY(-100%)',
+          'transform': 'rotate(0deg) translateX(-50%) translateY(-100%)'
         },
         left: {
           'bottom': `auto`,
-          'top': `${(popupHeight / 2) - (chevronWidth / 2)}px`,
+          'top': `${(popupHeight / 2)}px`,
           'left': `${popupWidth}px`,
-          '-webkit-transform': 'rotate(90deg)',
-          'transform': 'rotate(90deg)'
+          '-webkit-transform': 'rotate(90deg) translate(-50%, 0%)',
+          'transform': 'rotate(90deg) translate(-50%, 0%)'
         },
         right: {
           'bottom': `auto`,
-          'top': `${(popupHeight / 2) - (chevronWidth / 2)}px`,
-          'left': `-${chevronWidth}px`,
-          '-webkit-transform': 'rotate(-90deg)',
-          'transform': 'rotate(-90deg)'
+          'top': `${(popupHeight / 2)}px`,
+          'left': `0`,
+          '-webkit-transform': 'rotate(-90deg) translate(50%, -100%)',
+          'transform': 'rotate(-90deg) translate(50%, -100%)'
         }
       }
 
       var posX = left[direction]
       var posY = top[direction]
-      var chevronPos = chevron[direction]
+      var chevronPos = chevronStyle[direction]
 
       var doesOverflowToLeft = posX <= 0
       var doesOverflowToRight = posX + popupWidth >= windowWidth
@@ -321,11 +323,11 @@
         if (direction === 'top' ||
             direction === 'bottom') {
           posX -= posX
-          chevronPos.left = `${targetLeft + (targetWidth / 2) - (chevronWidth / 2)}px`
+          chevronPos.left = `${targetLeft + (targetWidth / 2)}px`
         }
         if (this.direction === 'left') {
           posX = left.right
-          chevronPos = chevron.right
+          chevronPos = chevronStyle.right
         }
       }
 
@@ -333,12 +335,12 @@
         if (direction === 'top' ||
             direction === 'bottom') {
           posX += (windowWidth - (posX + popupWidth))
-          chevronPos.left = `${(targetLeft - posX) + (targetWidth / 2) - (chevronWidth / 2)}px`
+          chevronPos.left = `${(targetLeft - posX) + (targetWidth / 2)}px`
         }
         if (direction === 'right') {
           if (left.left > 0) {
             posX = left.left
-            chevronPos = chevron.left
+            chevronPos = chevronStyle.left
           }
         }
       }
@@ -355,7 +357,7 @@
         if (direction === 'top') {
           posY = top.bottom
           let _chevronLeft = chevronPos.left
-          chevronPos = chevron.bottom
+          chevronPos = chevronStyle.bottom
           chevronPos.left = _chevronLeft
         }
       }
@@ -372,7 +374,7 @@
         if (direction === 'bottom') {
           posY = top.top
           let _chevronLeft = chevronPos.left
-          chevronPos = chevron.top
+          chevronPos = chevronStyle.top
           chevronPos.left = _chevronLeft
         }
       }

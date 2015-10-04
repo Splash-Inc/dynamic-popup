@@ -1,7 +1,8 @@
 # Dynamic Popup
 
-A tooltip that's triggered by click event on target. Target can be any element.
-DynamicPopup relocate itself depending on the viewport's bounds.
+A tooltip with a fully customizable content and style. It's triggered by click
+event on the target you specify. It'll relocate itself if it overflows the user's
+viewport.
 
 [Live Demo](http://codepen.io/pavlovsk/pen/epBKeK)
 
@@ -11,6 +12,7 @@ You can install the package with NPM.
 `npm i dynamic-popup`
 
 Or just download the minified file.
+
 After downloading files,
 
 ```js
@@ -20,7 +22,7 @@ var DynamicPopup = require('dynamic-popup')
 or
 
 ```
-<script type='text/javscript' src='dynamic-popup.min.js' />
+<script type='text/javascript' src='dynamic-popup.min.js' />
 ```
 
 and
@@ -30,17 +32,15 @@ new DynamicPopup({
   el: document.getElementById('example-target'),
   content: '<p>hello</p>',
   className: 'my-example-popup',
-  direction: 'right',
-  chevronWidth: 16,
-  prefetch: true
+  direction: 'right'
 })
 
 ```
 
 ## Options
 
-Only required options are `el` and `content` to get DynamicPopup properly work.
-Rest is optional.
+`el` and `content` are the only required parameters to get DynamicPopup properly work.
+It has also some handy options.
 
 `el`: Target element. When clicked, DynamicPopup will appear.
 
@@ -70,12 +70,12 @@ DynamicPopup({
 `direction | optional`: What direction popup will appear to.
 Can be 'top', 'left', 'right', 'bottom'. Default: 'bottom'.
 
-`chevronWidth | optional`: Size of arrow vector. Default: 12
-
 `prefetch | optional`: If enabled, any external sources found in content will be
 fetched before popup is visible. Can be used to enhance experience. Default: false
 
 ## Styling
+DynamicPopup comes with little styling. It provides a set of CSS selectors that 
+you can rely on when styling your popups. See demo for styling examples.
 
 You can override default popup style.
 
@@ -95,6 +95,7 @@ You can override a specific popup
 
 ## Notes
 
+### .destroy()
 DynamicPopup will destroy itself when clicked outside of popup but you may want
 to destroy it yourself in some circumstances. In such cases, you can use:
 

@@ -100,8 +100,6 @@
           'position: absolute',
           'background: rgba(0, 0, 0, .85)',
           'color: #fff',
-          //'-webkit-transition: all .3s',
-          //'transition: all .3s',
           'will-change: top, left',
           '-webkit-transform: translateZ(0)',
           'transform: translateZ(0)'

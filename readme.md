@@ -21,8 +21,14 @@ var DynamicPopup = require('dynamic-popup')
 
 or
 
+```js
+define(['path/to/dynamic-popup'], /*...*/)
 ```
-<script type='text/javascript' src='dynamic-popup.min.js' />
+
+or
+
+```
+<script type='text/javascript' src='path/to/dynamic-popup.min.js' />
 ```
 
 and

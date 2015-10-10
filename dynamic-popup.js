@@ -91,6 +91,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       this.defaultChevronWidth = 16;
       this.asyncElements = ['img'];
       this.prefetch = options.prefetch;
+      this.initialWidth = 0;
 
       // Classes
       this.baseClass = 'dynamic-popup';
@@ -109,7 +110,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       this.el.addEventListener('click', this.onClickEl);
 
-      this.styles = (_styles = {}, _defineProperty(_styles, "." + this.baseClass, ['position: absolute', 'background: rgba(0, 0, 0, .85)', 'color: #fff', 'will-change: top, left', '-webkit-transform: translateZ(0)', 'transform: translateZ(0)']), _defineProperty(_styles, "." + this.contentBase + " h1,\n          ." + this.contentBase + " h2,\n          ." + this.contentBase + " h3,\n          ." + this.contentBase + " h4,\n          ." + this.contentBase + " h4,\n          ." + this.contentBase + " h5,\n          ." + this.contentBase + " h6,\n          ." + this.contentBase + " blockquote,\n          ." + this.contentBase + " pre,\n          ." + this.contentBase + " span\n          ." + this.contentBase + " dl,\n          ." + this.contentBase + " dt,\n          ." + this.contentBase + " dd,\n          ." + this.contentBase + " ol,\n          ." + this.contentBase + " ul,\n          ." + this.contentBase + " li,\n          ." + this.contentBase + " table,\n          ." + this.contentBase + " caption,\n          ." + this.contentBase + " tbody,\n          ." + this.contentBase + " tfoot,\n          ." + this.contentBase + " thead,\n          ." + this.contentBase + " tr,\n          ." + this.contentBase + " th,\n          ." + this.contentBase + " td,\n          ." + this.contentBase + " p,\n          ." + this.contentBase + " img,\n          ." + this.contentBase + " ul,\n          ." + this.contentBase + " ol,\n          ." + this.contentBase + " dl\n          ." + this.contentBase + " li", ['margin: 0', 'padding: 0']), _defineProperty(_styles, "." + this.baseClass + " img", ['vertical-align: middle']), _defineProperty(_styles, "." + this.chevronBase, ['position: absolute', 'color: rgba(0, 0, 0, .85)', "width: " + this.defaultChevronWidth + "px", 'will-change: top, left', '-webkit-transform: translateZ(0)', 'transform: translateZ(0)']), _styles);
+      this.styles = (_styles = {}, _defineProperty(_styles, "." + this.baseClass, ['position: absolute', 'opacity: 0', 'background: rgba(0, 0, 0, .85)', 'color: #fff', 'will-change: top, left', '-webkit-transform: translateZ(0)', 'transform: translateZ(0)']), _defineProperty(_styles, "." + this.baseClass + " img", ['vertical-align: middle']), _defineProperty(_styles, "." + this.chevronBase, ['position: absolute', 'opacity: 0', 'color: rgba(0, 0, 0, .85)', "width: " + this.defaultChevronWidth + "px", 'will-change: top, left', '-webkit-transform: translateZ(0)', 'transform: translateZ(0)']), _styles);
 
       this.stylize();
       if (this.prefetch) {
@@ -210,6 +211,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: "render",
       value: function render() {
+        var _this4 = this;
+
         this.popup = document.createElement('div');
         this.popup.setAttribute('data-dynamic-popup', this.__uid);
         this.popup.classList.add(this.baseClass);
@@ -261,7 +264,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this.popup.appendChild(this.chevron);
         document.body.appendChild(this.popup);
 
-        this.position();
+        setTimeout(function () {
+          _this4.initialWidth = _this4.initialWidth || _this4.popup.getBoundingClientRect().width;
+          _this4.position();
+        }, 1);
       }
     }, {
       key: "destroy",
@@ -286,17 +292,17 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: "_onClickAnyWhere",
       value: function _onClickAnyWhere(event) {
-        var _this4 = this;
+        var _this5 = this;
 
         if (this.popup) {
           var target = event.target;
           var parents = this._dir(target, 'parentNode');
           parents.push(target);
           var clickedOnEl = parents.filter(function (p) {
-            return p == _this4.el;
+            return p == _this5.el;
           }).length;
           var clickedOnContent = parents.filter(function (p) {
-            return p == _this4.popup;
+            return p == _this5.popup;
           }).length;
 
           if (!clickedOnContent && !clickedOnEl) {
@@ -321,7 +327,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: "readDOMValues",
       value: function readDOMValues(callback) {
-        var _this5 = this;
+        var _this6 = this;
 
         setTimeout(function () {
           var scrollTop = (function () {
@@ -336,9 +342,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             return Math.max(s1, s2);
           })();
 
-          var targetPosition = _this5.el.getBoundingClientRect();
-          var popupPosition = _this5.popup.getBoundingClientRect();
-          var gapWidth = _this5.chevron.getBoundingClientRect().width * .8;
+          var targetPosition = _this6.el.getBoundingClientRect();
+          var popupPosition = _this6.popup.getBoundingClientRect();
+          var gapWidth = _this6.chevron.getBoundingClientRect().width * .8;
 
           callback({
             scrollTop: scrollTop,
@@ -352,17 +358,17 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: "_position",
       value: function _position() {
-        var _this6 = this;
+        var _this7 = this;
 
         requestAnimationFrame(function () {
-          _this6.readDOMValues(function (values) {
+          _this7.readDOMValues(function (values) {
             var scrollTop = values.scrollTop;
             var scrollLeft = values.scrollLeft;
             var targetPosition = values.targetPosition;
             var popupPosition = values.popupPosition;
             var gapWidth = values.gapWidth;
 
-            var direction = _this6.direction;
+            var direction = _this7.direction;
             var windowWidth = window.innerWidth;
             var windowHeight = window.innerHeight;
 
@@ -371,6 +377,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             var targetWidth = targetPosition.width;
             var targetHeight = targetPosition.height;
 
+            var initialPopupWidth = _this7.initialWidth;
             var popupWidth = popupPosition.width;
             var popupHeight = popupPosition.height;
 
@@ -433,7 +440,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 posX -= posX;
                 chevronPos.left = targetLeft + targetWidth / 2 + "px";
               }
-              if (_this6.direction === 'left') {
+              if (_this7.direction === 'left') {
                 posX = left.right;
                 chevronPos = chevronStyle.right;
               }
@@ -441,7 +448,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
             if (doesOverflowToRight) {
               if (direction === 'top' || direction === 'bottom') {
-                posX += windowWidth - (posX + popupWidth);
+                posX = windowWidth + scrollLeft - (initialPopupWidth + 2);
+                if (posX <= 0 || initialPopupWidth === 0) {
+                  posX = windowWidth + scrollLeft - popupWidth;
+                }
+
                 chevronPos.left = targetLeft - posX + targetWidth / 2 + "px";
               }
               if (direction === 'right') {
@@ -485,12 +496,22 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             }
 
             requestAnimationFrame(function () {
-              _this6.popup.style.cssText += "; left: " + posX + "px; top: " + posY + "px";
+              var popupStyle = "; left: " + posX + "px; top: " + posY + "px";
+              if (!_this7.popup.style.cssText.match(/opacity/)) {
+                popupStyle += '; opacity: 1';
+              }
+              _this7.popup.style.cssText += popupStyle;
+
+              var chevronStyle = '';
               for (var rule in chevronPos) {
                 if (chevronPos.hasOwnProperty(rule)) {
-                  _this6.chevron.style.cssText += "; " + rule + ": " + chevronPos[rule];
+                  chevronStyle += "; " + rule + ": " + chevronPos[rule];
                 }
               }
+              if (!_this7.chevron.style.cssText.match(/opacity/)) {
+                chevronStyle += '; opacity: 1';
+              }
+              _this7.chevron.style.cssText += chevronStyle;
             });
           });
         });

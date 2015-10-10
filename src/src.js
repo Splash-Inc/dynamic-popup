@@ -83,6 +83,7 @@
       this.defaultChevronWidth = 16
       this.asyncElements = ['img']
       this.prefetch = options.prefetch
+      this.initialWidth = 0
 
       // Classes
       this.baseClass = 'dynamic-popup'
@@ -98,50 +99,19 @@
       this.styles = {
         [`.${this.baseClass}`]: [
           'position: absolute',
+          'opacity: 0',
           'background: rgba(0, 0, 0, .85)',
           'color: #fff',
           'will-change: top, left',
           '-webkit-transform: translateZ(0)',
           'transform: translateZ(0)'
         ],
-        [`.${this.contentBase} h1,
-          .${this.contentBase} h2,
-          .${this.contentBase} h3,
-          .${this.contentBase} h4,
-          .${this.contentBase} h4,
-          .${this.contentBase} h5,
-          .${this.contentBase} h6,
-          .${this.contentBase} blockquote,
-          .${this.contentBase} pre,
-          .${this.contentBase} span
-          .${this.contentBase} dl,
-          .${this.contentBase} dt,
-          .${this.contentBase} dd,
-          .${this.contentBase} ol,
-          .${this.contentBase} ul,
-          .${this.contentBase} li,
-          .${this.contentBase} table,
-          .${this.contentBase} caption,
-          .${this.contentBase} tbody,
-          .${this.contentBase} tfoot,
-          .${this.contentBase} thead,
-          .${this.contentBase} tr,
-          .${this.contentBase} th,
-          .${this.contentBase} td,
-          .${this.contentBase} p,
-          .${this.contentBase} img,
-          .${this.contentBase} ul,
-          .${this.contentBase} ol,
-          .${this.contentBase} dl
-          .${this.contentBase} li`]: [
-          'margin: 0',
-          'padding: 0'
-        ],
         [`.${this.baseClass} img`]: [
           'vertical-align: middle'
         ],
         [`.${this.chevronBase}`]: [
           'position: absolute',
+          'opacity: 0',
           'color: rgba(0, 0, 0, .85)',
           `width: ${this.defaultChevronWidth}px`,
           'will-change: top, left',
@@ -255,7 +225,10 @@
       this.popup.appendChild(this.chevron)
       document.body.appendChild(this.popup)
 
-      this.position()
+      setTimeout(() => {
+        this.initialWidth = this.initialWidth || this.popup.getBoundingClientRect().width
+        this.position()
+      }, 1)
     }
 
     destroy() {
@@ -344,6 +317,7 @@
           var targetWidth = targetPosition.width
           var targetHeight = targetPosition.height
 
+          var initialPopupWidth = this.initialWidth
           var popupWidth = popupPosition.width
           var popupHeight = popupPosition.height
 
@@ -416,7 +390,11 @@
           if (doesOverflowToRight) {
             if (direction === 'top' ||
                 direction === 'bottom') {
-              posX += (windowWidth - (posX + popupWidth))
+              posX = (windowWidth + scrollLeft) - (initialPopupWidth + 2)
+              if (posX <= 0 || initialPopupWidth === 0) {
+                posX = (windowWidth + scrollLeft) - popupWidth
+              }
+
               chevronPos.left = `${(targetLeft - posX) + (targetWidth / 2)}px`
             }
             if (direction === 'right') {
@@ -462,12 +440,22 @@
           }
 
           requestAnimationFrame(() => {
-            this.popup.style.cssText += `; left: ${posX}px; top: ${posY}px`
+            var popupStyle = `; left: ${posX}px; top: ${posY}px`
+            if (!this.popup.style.cssText.match(/opacity/)) {
+              popupStyle += '; opacity: 1'
+            }
+            this.popup.style.cssText += popupStyle
+
+            var chevronStyle = ''
             for (var rule in chevronPos) {
               if (chevronPos.hasOwnProperty(rule)) {
-                this.chevron.style.cssText += `; ${rule}: ${chevronPos[rule]}`
+                chevronStyle += `; ${rule}: ${chevronPos[rule]}`
               }
             }
+            if (!this.chevron.style.cssText.match(/opacity/)) {
+              chevronStyle += '; opacity: 1'
+            }
+            this.chevron.style.cssText += chevronStyle
           })
         })
       })

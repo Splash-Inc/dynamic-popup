@@ -150,9 +150,9 @@ document.addEventListener('DOMContentLoaded', function () {
     '15': {
       el: dom('#example-15'),
       className: 'ex-15',
-      content: '<img src="http://placehold.it/150x150" />',
+      content: '<img src="http://placehold.it/170x170" />',
       direction: 'top',
-      prefetch: true
+      prefetch: false
     },
 
     '16': {

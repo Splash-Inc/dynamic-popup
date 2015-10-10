@@ -18,14 +18,17 @@
             border-bottom: 1px dashed red
         }
 
-        p {
+        h1, h2, h3, h4, h5, h6, p {
+            margin: 0;
+            padding: 0
+        }
+
+        .demo-paragraph {
             margin: 2em 0
         }
 
         .container {
-            padding: 2em 0;
-            width: 1200px;
-            margin: 0 auto
+            padding: 2em 0
         }
 
         .block-target {
@@ -138,11 +141,11 @@
 
 <div class="container">
     <h1>DynamicPopup</h1>
-    <p>
+    <p class="demo-paragraph">
         DynamicPopup is a click-triggered tooltip with a fully customizable
         content and style.
     </p>
-    <p>
+    <p class="demo-paragraph">
         <a class="github-button"
            href="https://github.com/Splash-Inc/dynamic-popup/archive/master.zip"
            data-icon="octicon-cloud-download"
@@ -158,7 +161,7 @@
            data-count-aria-label="# stargazers on GitHub"
            aria-label="Star Splash-Inc/dynamic-popup on GitHub">Star</a>
     </p>
-    <p>
+    <p class="demo-paragraph">
         Wisi <em id="example-1">1 - left</em> ad minim veniam quis nostrud exerci tation ullamcorper suscipit
         lobortis nisl ut. Liber tempor cum soluta nobis eleifend option congue
         nihil imperdiet doming id. Nonummy nibh euismod tincidunt ut laoreet
@@ -182,7 +185,7 @@
     <br/>
     <br/>
 
-    <p>
+    <p class="demo-paragraph">
         Wisi enim ad minim veniam quis <em id="example-3">3 - left, fetch</em> tation ullamcorper suscipit
         lobortis nisl ut. Liber tempor cum soluta nobis eleifend option congue
         nihil imperdiet doming id. Nonummy nibh euismod tincidunt ut laoreet
@@ -206,7 +209,7 @@
     <br/>
     <br/>
 
-    <p>
+    <p class="demo-paragraph">
         Wisi enim ad minim veniam quis nostrud exerci tation ullamcorper suscipit
         lobortis nisl ut. <em id="example-5">5 - bottom</em> cum soluta nobis eleifend option congue
         nihil imperdiet doming id. Nonummy nibh euismod tincidunt ut laoreet
@@ -224,7 +227,7 @@
     <button id="example-15"
             type="button"
             style="float:right">
-        15 - top, fetch
+        15 - top, no fetch
     </button>
 
     <br/>
@@ -244,7 +247,7 @@
     <br/>
     <br/>
 
-    <p>
+    <p class="demo-paragraph">
         Wisi enim ad minim veniam quis nostrud exerci tation ullamcorper suscipit
         lobortis nisl ut. Liber tempor cum soluta nobis eleifend option congue
         <em id="example-8">8 - top, fetch</em> imperdiet doming id. Nonummy nibh euismod tincidunt ut laoreet
@@ -268,7 +271,7 @@
     <br/>
     <br/>
 
-    <p>
+    <p class="demo-paragraph">
         Wisi enim ad minim veniam quis nostrud exerci tation ullamcorper suscipit
         lobortis nisl ut. Liber tempor cum soluta nobis eleifend option congue
         nihil imperdiet doming id. Nonummy <em id="example-10">10 - right, no fetch</em> euismod tincidunt ut laoreet
